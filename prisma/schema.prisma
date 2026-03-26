@@ -1,0 +1,174 @@
+// -----------------------------------------------------------------------------
+// 1. Konfiguration & Datenquelle
+// -----------------------------------------------------------------------------
+
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// -----------------------------------------------------------------------------
+// 2. Enums (Konstanten)
+// -----------------------------------------------------------------------------
+
+enum Role {
+  ADMIN
+  TUTOR
+  STUDENT
+}
+
+// -----------------------------------------------------------------------------
+// 3. Kern-Modelle (Hauptentitäten)
+// -----------------------------------------------------------------------------
+
+model User {
+  /// Eindeutige ID (wird oft durch Auth-Provider gesetzt)
+  id            String  @id
+  name          String
+  email         String
+  emailVerified Boolean @default(false)
+  image         String?
+  role          String? @default("user")
+  type          Role    @default(STUDENT)
+
+  /// Zeitstempel
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  /// Relationen
+  sessions    Session[]
+  accounts    Account[]
+  enrollments Enrollment[]
+
+  banned     Boolean?  @default(false)
+  banReason  String?
+  banExpires DateTime?
+  group      Group?    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId    String?
+  memberId   String    @default("")
+
+  username        String? @unique
+  displayUsername String?
+
+  @@unique([email])
+  @@unique([groupId, memberId])
+  @@map("user")
+}
+
+model Group {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  color     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  /// Relationen
+  users User[]
+
+  @@map("group")
+}
+
+model Course {
+  id          String  @id @default(cuid())
+  title       String
+  description String?
+  image       String?
+  code        String?
+  length      String?
+  literature  String?
+  material    String?
+
+  /// Zeitstempel
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  /// Relationen
+  enrollments Enrollment[]
+
+  @@map("course")
+}
+
+// -----------------------------------------------------------------------------
+// 4. Relationen (Join-Tables)
+// -----------------------------------------------------------------------------
+
+model Enrollment {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  progress  Int      @default(0)
+
+  /// Relation: User
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /// Relation: Course
+  courseId String
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@index([userId])
+  @@map("enrollment")
+}
+
+// -----------------------------------------------------------------------------
+// 5. Authentifizierung (Auth-Provider spezifisch)
+// -----------------------------------------------------------------------------
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  ipAddress String?
+  userAgent String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  /// Relation: User
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  impersonatedBy String?
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}

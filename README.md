@@ -1,5 +1,5 @@
 # 🎓 EduPlatform LearnStack - Scrum Project (3 Weeks)
-
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/AE0125/LearnStack?utm_source=oss&utm_medium=github&utm_campaign=AE0125%2FLearnStack&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
 Eine moderne Lernplattform für Schüler, Dozenten und Admins.
 
 ## 🚀 Quick Start
@@ -10,19 +10,11 @@ Eine moderne Lernplattform für Schüler, Dozenten und Admins.
 5. **Entwicklung:** `bun run dev`
 
 ## 🛠 Tech Stack
-- **Frontend/Backend:** 
-- **Auth:** Auth & Keycloak (inkl. 2FA)
+- **Frontend/Backend:** Next.js 
+- **Auth:** Auth & Authentik (inkl. 2FA)
 - **Styling:** TailwindCSS
 - **DB:** PostgreSQL
 
-Vorschlag:
-Framework,"Next.js (App Router, RSC)" alternativen Vue, Angular offen für Vorschläge
-Styling,TailwindCSS
-Authentifizierung,Keycloak (Provider) + NextAuth.js (Integration) + 2FA
-Datenbank,PostgreSQL
-Infrastruktur,Docker-compose (Local Dev)
-Design/UI,"Figma (Design), Framer (Animationen)"
-Bereitstellung,Mobile-First / Responsive Web App (PWA-ready)
 
 ## 📂 Repo-Struktur (Vorschlag)
 ```
@@ -41,7 +33,29 @@ Bereitstellung,Mobile-First / Responsive Web App (PWA-ready)
 └── tailwind.config.js
 ```
 
+Namenskonventionen: 
+Präfix | Beschreibung | Beispiel
+-- | -- | --
+feat/ | Neue Funktionen oder Erweiterungen | feat/issue-ID-titel
+fix/ | Fehlerbehebungen (Bugfixes) | fix/issue-ID-titel
+docs/ | Dokumentationsänderungen | docs/update-readme
+refactor/ | Code-Optimierung ohne neue Funktionen | refactor/cleanup-api
+
 ## 📅 Projekt-Plan
 - **Woche 1:** Setup & Auth (Epic 1)
 - **Woche 2:** Kurse & Permissions (Epic 2 & 4)
 - **Woche 3:** Kalender & Polishing (Epic 3)
+
+
+Goto directory docker/
+```bash
+cd docker
+docker compose up -d
+```
+
+Im browser http://localhost:9000/if/flow/initial-setup/
+Application erstellen
+clientid und secret in die .env übertragen
+
+Redirect URL
+http://localhost:3000/api/auth/callback/authentik

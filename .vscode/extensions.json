@@ -1,0 +1,10 @@
+{
+    "recommendations": [
+        "coderabbit.coderabbit-vscode",
+        "dbaeumer.vscode-eslint",
+        "ecmel.vscode-html-css",
+        "esbenp.prettier-vscode",
+        "prisma.prisma",
+        "bradlc.vscode-tailwindcss"
+    ]
+}
